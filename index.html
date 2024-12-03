@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Gastos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Controle de Gastos</h1>
+        </header>
+
+        <!-- Conteúdo principal -->
+        <main class="main-content">
+            <!-- Formulário -->
+            <section class="form-section">
+                <h2>Adicionar Despesa</h2>
+                <form id="expense-form">
+                    <label for="month">Mês:</label>
+                    <select id="month" name="month">
+                        <option value="Janeiro">Janeiro</option>
+                        <option value="Fevereiro">Fevereiro</option>
+                        <option value="Março">Março</option>
+                        <option value="Abril">Abril</option>
+                        <option value="Maio">Maio</option>
+                        <option value="Junho">Junho</option>
+                        <option value="Julho">Julho</option>
+                        <option value="Agosto">Agosto</option>
+                        <option value="Setembro">Setembro</option>
+                        <option value="Outubro">Outubro</option>
+                        <option value="Novembro">Novembro</option>
+                        <option value="Dezembro">Dezembro</option>
+                    </select>
+
+                    <label for="description">Descrição:</label>
+                    <input type="text" id="description" name="description" placeholder="Ex: Conta de Luz">
+
+                    <label for="amount">Valor (R$):</label>
+                    <input type="number" id="amount" name="amount" placeholder="Ex: 150.00">
+
+                    <label for="installments">Parcelas:</label>
+                    <input type="number" id="installments" name="installments" placeholder="Ex: 3">
+
+                    <button type="submit">Adicionar</button>
+                </form>
+            </section>
+
+            <!-- Lista de despesas -->
+            <section class="expenses-section">
+                <h2>Despesas por Mês</h2>
+                <div id="expense-lists"></div>
+            </section>
+
+            <!-- Gráfico -->
+            <section class="chart-section">
+                <h2>Resumo Mensal</h2>
+                <canvas id="expenseChart"></canvas>
+            </section>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
