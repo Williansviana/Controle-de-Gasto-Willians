@@ -32,7 +32,6 @@ function updateChart() {
     ];
 
     if (chart) chart.destroy(); // Evita duplicar o gráfico
-
     chart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -59,20 +58,17 @@ function updateChart() {
 // Função para renderizar despesas
 function renderExpenses() {
     expenseLists.innerHTML = '';
-
     const months = [
         "Janeiro", "Fevereiro", "Março", "Abril", "Maio", 
         "Junho", "Julho", "Agosto", "Setembro", "Outubro", 
         "Novembro", "Dezembro"
     ];
-
     months.forEach((month, index) => {
         const expensesForMonth = expenses.filter(exp => exp.month === index);
         if (expensesForMonth.length > 0) {
             const monthCard = document.createElement('div');
             monthCard.classList.add('card');
             monthCard.innerHTML = `<h3>${month}</h3>`;
-
             const table = document.createElement('table');
             table.innerHTML = `
                 <thead>
@@ -85,7 +81,6 @@ function renderExpenses() {
                 <tbody>
                 </tbody>
             `;
-
             const tbody = table.querySelector('tbody');
             expensesForMonth.forEach(exp => {
                 const row = document.createElement('tr');
@@ -97,20 +92,16 @@ function renderExpenses() {
                         <button class="btn btn-danger" data-id="${exp.id}">Excluir</button>
                     </td>
                 `;
-
                 // Botão de marcar como pago
                 row.querySelector('.btn-success').addEventListener('click', () => {
                     markAsPaid(exp.id);
                 });
-
                 // Botão de excluir
                 row.querySelector('.btn-danger').addEventListener('click', () => {
                     deleteExpense(exp.id);
                 });
-
                 tbody.appendChild(row);
             });
-
             monthCard.appendChild(table);
             expenseLists.appendChild(monthCard);
         }
@@ -120,14 +111,24 @@ function renderExpenses() {
 // Função para adicionar despesa
 function addExpense(event) {
     event.preventDefault();
-
     const monthIndex = monthSelect.selectedIndex;
     const description = descriptionInput.value;
-    const amount = parseFloat(amountInput.value.replace('.', '').replace(',', '.')); // Converter formato brasileiro para número
+    
+    // Garantir que o valor seja tratado corretamente com centavos
+    let amount = amountInput.value.replace(',', '.'); // Converte vírgula para ponto
+    amount = parseFloat(amount);
+    
+    // Verificar se o valor é um número válido
+    if (isNaN(amount) || amount <= 0) {
+        alert('Por favor, insira um valor válido!');
+        return;
+    }
+    
     const installments = parseInt(installmentsInput.value);
 
-    if (!description || !amount || !installments) {
-        alert('Por favor, preencha todos os campos!');
+    // Validar se a descrição e o número de parcelas são válidos
+    if (!description || !installments || installments <= 0) {
+        alert('Por favor, preencha todos os campos corretamente!');
         return;
     }
 
@@ -135,7 +136,6 @@ function addExpense(event) {
     for (let i = 0; i < installments; i++) {
         const month = (monthIndex + i) % 12;
         const expenseId = Date.now() + i; // Gera IDs únicos
-
         const expense = {
             id: expenseId,
             description: `${description} (Parcela ${i + 1}/${installments})`,
@@ -143,22 +143,20 @@ function addExpense(event) {
             month,
             paid: false
         };
-
         expenses.push(expense);
         monthlyTotals[month] += amount; // Soma o valor integral
     }
-
+    
     saveToLocalStorage();
     renderExpenses();
     updateChart();
-
     form.reset();
 }
 
 // Função para marcar despesa como paga
 function markAsPaid(id) {
     const expense = expenses.find(exp => exp.id === id);
-    if (expense) {
+    if (expense && !expense.paid) {
         expense.paid = true;
         saveToLocalStorage();
         renderExpenses();
@@ -168,18 +166,16 @@ function markAsPaid(id) {
 // Função para excluir despesa
 function deleteExpense(id) {
     const expense = expenses.find(exp => exp.id === id);
-
-    if (expense) {
+    if (expense && confirm('Tem certeza que deseja excluir esta despesa?')) {
         monthlyTotals[expense.month] -= expense.amount;
         expenses = expenses.filter(exp => exp.id !== id);
-
         saveToLocalStorage();
         renderExpenses();
         updateChart();
     }
 }
 
-// Event Listener
+// Event Listener para o formulário
 form.addEventListener('submit', addExpense);
 
 // Inicializar gráfico e interface
